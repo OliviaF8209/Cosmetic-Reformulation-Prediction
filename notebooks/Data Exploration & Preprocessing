@@ -1,0 +1,85 @@
+## Notebook 1: Data Exploration & Preprocessing
+
+### Project Objective
+The objective of this project is to use machine learning to predict which cosmetic products are most likely to be reformulated. This analysis is based on data from the California Safe Cosmetics Program (CSCP) and aims to provide actionable insights for cosmetic chemists and manufacturers to support proactive, safety-driven product development.
+
+### 1. Data Loading & Initial Exploration
+This section loads the raw dataset and performs an initial analysis to understand its structure and key challenges.
+Python
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset (replace with your file path)
+# Note: You can upload your 'cscpopendata_clean.csv' to Colab's file system.
+df = pd.read_csv("cscpopendata_clean.csv")
+
+# Display the first few rows
+print("Dataset Head:")
+print(df.head())
+print("\n")
+
+# Display dataset information
+print("Dataset Info:")
+print(df.info())
+
+# Show the class imbalance (as seen in your presentations)
+reformulated_count = df['Reformulated'].sum()
+non_reformulated_count = len(df) - reformulated_count
+total_count = len(df)
+print(f"\nClass Imbalance: Total products = {total_count}")
+print(f"Reformulated: {reformulated_count} ({reformulated_count / total_count:.2%})")
+print(f"Non-Reformulated: {non_reformulated_count} ({non_reformulated_count / total_count:.2%})")
+
+# Visualizing the imbalance
+plt.figure(figsize=(8, 6))
+sns.countplot(x='Reformulated', data=df)
+plt.title('Distribution of Reformulated vs. Non-Reformulated Products')
+plt.xlabel('Reformulated (0 = No, 1 = Yes)')
+plt.ylabel('Count')
+plt.show()
+
+Markdown
+
+### 2. Data Cleaning & Standardization
+One of the main challenges was cleaning inconsistent data. Here's a look at how I handled this.
+Python
+
+# Standardize company names
+df['CompanyName'] = df['CompanyName'].str.replace('INC.', '', regex=False).str.strip()
+
+# Standardize product names
+df['ProductName'] = df['ProductName'].str.strip().str.upper()
+
+# Drop the 'CSF' column as it has too many missing values
+df.drop('CSF', axis=1, inplace=True)
+
+# Convert date columns to datetime objects
+df['InitialDateReported'] = pd.to_datetime(df['InitialDateReported'], errors='coerce')
+df['MostRecentDateReported'] = pd.to_datetime(df['MostRecentDateReported'], errors='coerce')
+
+# Handle missing reformulation dates by creating the binary target variable
+df['Reformulated'] = df['ChemicalDateRemoved'].notna().astype(int)
+
+print("\nDataset after cleaning and feature engineering:")
+print(df.info())
+print("\n")
+print(df.head())
+
+### 3. Categorizing Chemicals with an External Tool
+
+After standardizing the `ChemicalName` column, I was left with over 40 unique chemical names that needed to be categorized for modeling. Manually categorizing each one would have been time-consuming. To increase efficiency, I used an external language model (like ChatGPT) to help create a classification system.
+
+**My Process:**
+1.  I extracted a list of the 47 most frequent unique chemicals from my dataset.
+2.  I provided this list to the language model and asked it to categorize each chemical into one of the following groups based on its function and common use in cosmetics:
+    * **Solvents** (e.g., Ethanol, Glycerin)
+    * **Preservatives** (e.g., Formaldehyde, Parabens)
+    * **Colorants** (e.g., pigments)
+    * **Fragrances** (e.g., Limonene, Linalool)
+    * **Moisturizers** (e.g., Hyaluronic Acid)
+    * **Surfactants** (e.g., Sodium Lauryl Sulfate)
+    * **UV Filters** (e.g., Zinc Oxide)
+3.  The model provided a categorized list, which I then manually reviewed and refined to ensure accuracy based on my cosmetic chemistry domain knowledge.
