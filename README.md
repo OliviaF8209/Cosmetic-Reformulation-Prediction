@@ -30,8 +30,8 @@ We compared several models to predict reformulation likelihood:
 
 * Logistic Regression
 * Decision Trees
-* Random Forest
-* XGBoost (primary focus)
+* Random Forest (primary focus)
+* XGBoost 
 
 **Model Tuning:**
 
@@ -41,7 +41,7 @@ We compared several models to predict reformulation likelihood:
 
 ## Results
 
-* **XGBoost** outperformed baseline models after including **time-based features**.
+* **Random Forest** outperformed baseline models after including **time-based features**.
 * Metrics included:
 
   * Accuracy
