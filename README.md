@@ -48,7 +48,7 @@ We compared several models to predict reformulation likelihood:
   * Precision, Recall, F1-score
   * Confusion Matrix (see visual below)
 
-*Insert figure of confusion matrix or performance table here*
+<img width="938" height="818" alt="Image" src="https://github.com/user-attachments/assets/9f015dbf-0005-4801-bea6-73541161f36a" />
 
 
 ## Real-World Impact
